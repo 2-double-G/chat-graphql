@@ -1,4 +1,3 @@
-type ButtonType = { [key: string]: string };
 type bottonColor = "default" | "orange" | "violet" | "secondary";
 
 interface IButton {
