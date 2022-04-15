@@ -4,6 +4,9 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const devMode = process.env.NODE_ENV !== "production";
 
 module.exports = {
+  output: {
+    publicPath: "http://localhost:8080/",
+  },
   target: "web",
   mode: devMode ? "development" : "production",
   entry: "./src/components/index.tsx",
