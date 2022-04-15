@@ -1,49 +1,51 @@
-const { createServer } = require("@graphql-yoga/node");
-const { typeDefs } = require("./schema/typeDefs");
-const { dialogs } = require("./psevdoDB/dialogs");
-const { users } = require("./psevdoDB/users");
-const { currentUser } = require("./psevdoDB/currentUser");
+const express = require("express");
+const { createServer } = require("http");
+const { WebSocketServer } = require("ws");
+const { useServer } = require("graphql-ws/lib/use/ws");
+const { ApolloServer } = require("apollo-server-express");
+const { ApolloServerPluginDrainHttpServer } = require("apollo-server-core");
 
-const messages = [];
+const { schema } = require("./schema/schema");
 
-const resolvers = {
-  Query: {
-    messages: () => messages,
-    dialogs: () => dialogs,
-    dialog: (id) => {
-      console.log(id);
-    },
-    users: () => users,
-    currentUser: () => ({
-      ...currentUser,
-      rooms: dialogs.filter(
-        ({ users }) => !!users.find(({ id }) => id === currentUser.id)
-      ),
-    }),
-  },
-  Mutation: {
-    postMessage: (parent, { user, content }) => {
-      const id = Date.now();
-      messages.push({ id, user, content });
+const PORT = 4000;
 
-      return id;
-    },
-    postDialog: (parent, { name, users: usersId }) => {
-      const id = Date.now();
+const app = express();
+const httpServer = createServer(app);
 
-      const dialodUsers = users.filter(({ id }) =>
-        usersId.includes(id.toString())
-      );
-      const dialog = { id, name, users: dialodUsers };
-      dialogs.push(dialog);
-
-      return id;
-    },
-  },
-};
-
-const server = createServer({ schema: { typeDefs, resolvers } });
-
-server.start(({ port }) => {
-  console.log(`Server on http://localhost:${port}/`);
+const wsServer = new WebSocketServer({
+  server: httpServer,
+  path: "/subscriptions",
 });
+const serverCleanup = useServer({ schema }, wsServer);
+
+const server = new ApolloServer({
+  schema,
+  plugins: [
+    ApolloServerPluginDrainHttpServer({ httpServer }),
+
+    {
+      async serverWillStart() {
+        return {
+          async drainServer() {
+            await serverCleanup.dispose();
+          },
+        };
+      },
+    },
+  ],
+});
+
+httpServer.listen(PORT, () => {
+  console.log(PORT);
+  console.log(`🚀 Query endpoint ready at http://localhost:${PORT}/graphql`);
+  console.log(
+    `🚀 Subscription endpoint ready at ws://localhost:${PORT}/subscriptions`
+  );
+});
+
+async function startServer() {
+  await server.start();
+  server.applyMiddleware({ app });
+}
+
+startServer();
