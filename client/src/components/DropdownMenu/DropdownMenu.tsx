@@ -28,9 +28,9 @@ export const DropdownMenu: React.FC = () => {
   const showListHandler = () => setShowList((prev) => !prev);
 
   return (
-    <div ref={ref} className="relative flex items-center md:order-2">
+    <div ref={ref} className="relative flex items-center">
       <button
-        className="flex mr-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300"
+        className="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300"
         id="user-menu-button"
         aria-expanded="false"
         data-dropdown-toggle="dropdown"

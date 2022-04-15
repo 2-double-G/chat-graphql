@@ -1,11 +1,10 @@
+import { ButtonHTMLAttributes } from "react";
+
 type bottonColor = "default" | "orange" | "violet" | "secondary";
 
-interface IButton {
+interface IButton extends ButtonHTMLAttributes<HTMLButtonElement> {
   color?: bottonColor;
-  props?: any;
-  className?: string;
   children: React.ReactNode | React.ReactChild;
-  onClick?: () => void;
 }
 
 export const Button: React.FC<IButton> = ({
