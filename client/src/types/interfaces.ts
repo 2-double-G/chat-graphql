@@ -19,7 +19,8 @@ export interface IMessage {
 
 export interface IDialog {
   id: number | string;
-  name?: string;
+  name: string;
+  type: "room" | "person";
   users: Array<IUser>;
   messages: Array<IMessage>;
 }

@@ -8,8 +8,6 @@ import { useQuery } from "@apollo/client";
 import { messagesQuery } from "./queries";
 
 export const Messages: React.FC = () => {
-  const { data: messagesArr } = useQuery(messagesQuery);
-
   const [inputFocus, setInputFocus] = useState(false);
 
   const { name, users, messages } = dialog;

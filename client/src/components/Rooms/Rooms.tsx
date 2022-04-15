@@ -1,23 +1,29 @@
 import { Room } from "./Room";
 
-import { useQuery } from "@apollo/client";
-import { roomsQuery } from "./queries";
+import { useQuery, useSubscription } from "@apollo/client";
+import { roomsQuery, currentUserQuery } from "./queries";
 import { defaultUserData } from "../../utils/defaultUser";
-import { ICurrentUser } from "../../types/interfaces";
+import { ICurrentUser, IDialog } from "../../types/interfaces";
 
-export const Rooms: React.FC = () => {
-  const { data = defaultUserData } = useQuery(roomsQuery);
+interface RoomsProps {
+  userId: string;
+}
 
-  const { rooms = [] } = data.currentUser as ICurrentUser;
+export const Rooms: React.FC<RoomsProps> = ({ userId }) => {
+  const { data } = useSubscription(roomsQuery, {
+    variables: { id: 0, type: "room" },
+  });
+
+  const dialogs: Array<IDialog> = data ? data.dialogs : [];
   const activeRoom = 2;
 
   return (
     <div className="bg-violet-400 h-full rounded-lg p-6 overflow-auto">
       <div className="flex justify-between text-gray-50 font-semibold px-5">
         <h2>Rooms</h2>
-        <small>{rooms.length}</small>
+        <small>{dialogs.length}</small>
       </div>
-      {rooms.map(({ id, name, users }) => (
+      {dialogs.map(({ id, name, users }) => (
         <Room
           key={id}
           id={id}
