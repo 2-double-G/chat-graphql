@@ -23,9 +23,9 @@ export const Modal: React.FC<ModalProps> = ({ children, onClose }) => {
   return ReactDOM.createPortal(
     <ModalContext.Provider value={onClose}>
       <div
-        className="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 w-full md:inset-0 h-modal md:h-full  justify-center items-center flex bg-gray-500/60"
+        className="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 w-full h-modal h-full  justify-center items-center flex bg-gray-500/60"
       >
-        <div className="relative p-4 w-full max-w-md h-full md:h-auto">
+        <div className="relative p-4 w-full max-w-md h-full h-auto">
           <div className="relative bg-gray-50 rounded-lg shadow">
             {children}
           </div>
