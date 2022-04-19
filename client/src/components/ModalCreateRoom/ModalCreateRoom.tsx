@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 
 import { userQuery } from "./queries";
@@ -14,13 +14,26 @@ interface ModalProps {
 
 export const ModalCreateRoom: React.FC<ModalProps> = ({ onClose }) => {
   const ref = useRef<HTMLInputElement>(null);
+  const [error, setError] = useState(null);
 
   const { data } = useQuery(userQuery);
   const [postRoom] = useMutation(createRoomMutation);
 
   const createRoom = () => {
+    const name = ref.current.value?.trim();
+
+    if (!name || name.length < 3) {
+      setError("Name should be more than 3 characters");
+      return;
+    } else if (name.length > 16) {
+      setError("Name should be less than 16 characters");
+      return;
+    } else {
+      setError(null);
+    }
+
     const room = {
-      name: ref.current.value?.trim(),
+      name,
       users: [data.currentUser.id],
       type: "room",
     } as Omit<IDialog, "messages">;
@@ -40,7 +53,6 @@ export const ModalCreateRoom: React.FC<ModalProps> = ({ onClose }) => {
               name="name"
               autoComplete="off"
               className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              placeholder=" "
               required
             />
             <label
@@ -49,6 +61,7 @@ export const ModalCreateRoom: React.FC<ModalProps> = ({ onClose }) => {
             >
               Room name
             </label>
+            {!!error && <div>{error}</div>}
           </div>
         </form>
       </ModalBody>

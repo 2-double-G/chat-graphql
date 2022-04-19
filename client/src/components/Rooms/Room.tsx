@@ -31,7 +31,7 @@ export const Room: React.FC<IRoom> = ({
         {replaceImgWithName(name)}
       </div>
       <div className="px-3 flex flex-col">
-        <p className="font-semibold">{name}</p>
+        <p className="font-semibold truncate max-w-[164px]">{name}</p>
         <small>{userwordEnding(usersCount)}</small>
       </div>
     </div>
